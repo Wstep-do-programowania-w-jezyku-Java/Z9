@@ -121,6 +121,7 @@ public class DrawMainFrame extends JFrame implements Runnable {
 					});
 					int result=fc.showOpenDialog(parentFrame);
 //					if result==JFileChooser.APPROVE_OPTION
+					
 				}
 			});
 		}
