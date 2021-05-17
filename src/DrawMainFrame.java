@@ -4,15 +4,23 @@ import java.awt.Dimension;
 import java.awt.EventQueue;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
+import java.awt.Image;
 import java.awt.Point;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.event.MouseEvent;
+import java.awt.event.MouseListener;
+import java.awt.event.MouseMotionListener;
 import java.awt.geom.Ellipse2D;
 import java.awt.geom.Line2D;
+import java.awt.geom.Point2D;
 import java.awt.geom.Rectangle2D;
 import java.awt.geom.Rectangle2D.Double;
 import java.io.File;
+import java.util.ArrayList;
+import java.util.List;
 
+import javax.swing.ImageIcon;
 import javax.swing.JButton;
 import javax.swing.JColorChooser;
 import javax.swing.JFileChooser;
@@ -27,6 +35,7 @@ public class DrawMainFrame extends JFrame implements Runnable {
 	private DrawPanel drawPanel;
 	private Color currentColor;
 	private Point startPoint=new Point(0,300),endPoint=new Point(0,400);
+	private Image img;
 	public static void main(String[] args) {
 		EventQueue.invokeLater(new DrawMainFrame("Okno główne"));
 	}
@@ -120,8 +129,11 @@ public class DrawMainFrame extends JFrame implements Runnable {
 						}
 					});
 					int result=fc.showOpenDialog(parentFrame);
-//					if result==JFileChooser.APPROVE_OPTION
-					
+					if (result==JFileChooser.APPROVE_OPTION)
+					{
+						img=new ImageIcon(fc.getSelectedFile().getAbsolutePath()).getImage();
+						drawPanel.repaint();
+					}
 				}
 			});
 		}
@@ -129,9 +141,13 @@ public class DrawMainFrame extends JFrame implements Runnable {
 	
 	class DrawPanel extends JPanel{
 		private DrawMainFrame parentFrame;
+		private List<Point2D> punkty=new ArrayList<>();
+		private MouseHandler handler;
 		public DrawPanel(DrawMainFrame parentFrame) {
 			this.parentFrame=parentFrame;
 			setPreferredSize(new Dimension(800,600));
+			handler=new MouseHandler();
+			addMouseMotionListener(handler);
 		}
 		
 		@Override
@@ -154,6 +170,61 @@ public class DrawMainFrame extends JFrame implements Runnable {
 			
 			Line2D animatedLine=new Line2D.Double(startPoint,endPoint);
 			g2.draw(animatedLine);
+			
+			if(img!=null)
+				g2.drawImage(img, 200, 200, null);
+			
+			for(int i=1;i<punkty.size();i++) {
+				Line2D l=new Line2D.Double(punkty.get(i),punkty.get(i-1));
+				g2.draw(l);
+			}
+		}
+		
+		class MouseHandler implements MouseListener, MouseMotionListener{
+
+			@Override
+			public void mouseClicked(MouseEvent e) {
+				// TODO Auto-generated method stub
+				
+			}
+
+			@Override
+			public void mousePressed(MouseEvent e) {
+				// TODO Auto-generated method stub
+				
+			}
+
+			@Override
+			public void mouseReleased(MouseEvent e) {
+				// TODO Auto-generated method stub
+				
+			}
+
+			@Override
+			public void mouseEntered(MouseEvent e) {
+				// TODO Auto-generated method stub
+				
+			}
+
+			@Override
+			public void mouseExited(MouseEvent e) {
+				// TODO Auto-generated method stub
+				
+			}
+
+			@Override
+			public void mouseDragged(MouseEvent e) {
+					Point2D point=e.getPoint();
+					punkty.add(point);
+					drawPanel.repaint();
+			}
+
+			@Override
+			public void mouseMoved(MouseEvent e) {
+				// TODO Auto-generated method stub
+				
+			}
+			
 		}
 	}
 }
